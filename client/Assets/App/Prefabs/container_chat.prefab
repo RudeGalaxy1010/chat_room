@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3123757730646313331}
+  - component: {fileID: 7006202498937253308}
   m_Layer: 5
   m_Name: container_chat
   m_TagString: Untagged
@@ -37,6 +38,21 @@ RectTransform:
   m_AnchoredPosition: {x: 350, y: 200}
   m_SizeDelta: {x: 700, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &7006202498937253308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 354286988028891216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ca4557a19bc4a96a2bf4e779d953ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _chatMessageViewPrefab: {fileID: 5982849267521068386, guid: ab3f956eabcafdf44870989dc755b520, type: 3}
+  _inputView: {fileID: 1997747793498871763}
+  _messagesRoot: {fileID: 1767846732324469335}
 --- !u!1 &2297623355971114544
 GameObject:
   m_ObjectHideFlags: 0
@@ -646,6 +662,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8a5ecc2a605ab94280e7da8e281de04, type: 3}
+--- !u!114 &1997747793498871763 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7748707483037533232, guid: f8a5ecc2a605ab94280e7da8e281de04, type: 3}
+  m_PrefabInstance: {fileID: 8084415903431594979}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88eb0d398bcf49cab48f53014dbc1058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &5865999372390794088 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2403139032877600907, guid: f8a5ecc2a605ab94280e7da8e281de04, type: 3}

@@ -557,6 +557,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _root: {fileID: 1283415273}
   _playerPrefab: {fileID: 5543984187651234955, guid: 21daec3a4436b1545b6b230a6e937779, type: 3}
+  _chatView: {fileID: 8148562045851908587}
 --- !u!1 &1874760718
 GameObject:
   m_ObjectHideFlags: 0
@@ -769,6 +770,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e0cb7ffbed2ccf4b9b9caf6e76130d2, type: 3}
+--- !u!114 &8148562045851908587 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7006202498937253308, guid: 2e0cb7ffbed2ccf4b9b9caf6e76130d2, type: 3}
+  m_PrefabInstance: {fileID: 8148562045851908586}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ca4557a19bc4a96a2bf4e779d953ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

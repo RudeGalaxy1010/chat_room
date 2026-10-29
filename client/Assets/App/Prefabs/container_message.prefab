@@ -169,8 +169,9 @@ GameObject:
   - component: {fileID: 7620367733619530516}
   - component: {fileID: 5168207867892857874}
   - component: {fileID: 4970860423745056946}
+  - component: {fileID: 5982849267521068386}
   m_Layer: 5
-  m_Name: message_view
+  m_Name: container_message
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -237,6 +238,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &5982849267521068386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3688794827838366409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b16dc140e67294c8930ee780cb7efd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _nameLabel: {fileID: 8125518055688765361}
+  _textLabel: {fileID: 1094041346905292569}
 --- !u!1 &8533356069511490252
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,8 +327,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4280204875
+  m_fontColor: {r: 0.29269266, g: 0.745283, b: 0.116011046, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
