@@ -8,5 +8,6 @@ namespace App.Domains.Player.Api
         void SetPosition(Vector2 position);
         void SetName(string value);
         void SetColor(Color color);
+        void Despawn();
     }
 }

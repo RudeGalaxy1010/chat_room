@@ -20,5 +20,15 @@ namespace App.Domains.Player.Impl
 
         public void SetColor(Color color) =>
             _spriteRenderer.color = color;
+
+        public void Despawn()
+        {
+            if (this == null)
+            {
+                return;
+            }
+
+            Destroy(gameObject);
+        }
     }
 }

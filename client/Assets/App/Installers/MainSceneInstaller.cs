@@ -16,6 +16,7 @@ namespace App.Installers
             Container.BindInterfacesTo<PlayerFactory>().AsSingle().WithArguments(_playerPrefab, _root);
             Container.BindInterfacesTo<InputService>().AsSingle();
             Container.BindIFactory<IPlayerView, IMoveService>().To<LocalMoveService>().AsSingle();
+            Container.BindInterfacesTo<PlayerModelFactory>().AsSingle();
         }
     }
 }
