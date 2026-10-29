@@ -1,4 +1,8 @@
 ﻿namespace App.Domains.Player.Api
 {
-    public class IMoveService { }
+    public interface IMoveService
+    {
+        void Register(IPlayerModel player);
+        void Unregister(IPlayerModel player);
+    }
 }

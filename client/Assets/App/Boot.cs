@@ -14,7 +14,8 @@ namespace App
         public Boot(IPlayerModelFactory playerFactory) =>
             _playerFactory = playerFactory;
 
-        public void Initialize() =>
+        public void Initialize()
+        {
             _localPlayer = _playerFactory.CreateLocalPlayer(new PlayerEntity
             (
                 -1,
@@ -23,6 +24,14 @@ namespace App
                 "Test",
                 "#FFFFF2"
             ));
+
+            var remotePlayer = _playerFactory.CreateRemotePlayer(new PlayerEntity(
+                1,
+                0,
+                0,
+                "Remote",
+                "#232323"));
+        }
 
         public void Dispose()
         {

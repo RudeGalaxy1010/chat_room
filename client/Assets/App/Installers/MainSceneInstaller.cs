@@ -1,4 +1,3 @@
-using App.Domains.Player.Api;
 using App.Domains.Player.Impl;
 using UnityEngine;
 using Zenject;
@@ -15,7 +14,8 @@ namespace App.Installers
             Container.BindInterfacesTo<Boot>().AsSingle();
             Container.BindInterfacesTo<PlayerFactory>().AsSingle().WithArguments(_playerPrefab, _root);
             Container.BindInterfacesTo<InputService>().AsSingle();
-            Container.BindIFactory<IPlayerView, IMoveService>().To<LocalMoveService>().AsSingle();
+            Container.BindInterfacesTo<LocalMoveService>().AsSingle();
+            Container.BindInterfacesTo<RemoteMoveService>().AsSingle();
             Container.BindInterfacesTo<PlayerModelFactory>().AsSingle();
         }
     }

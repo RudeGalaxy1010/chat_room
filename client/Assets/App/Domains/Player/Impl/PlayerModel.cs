@@ -2,7 +2,6 @@
 using App.Domains.Network.Impl;
 using App.Domains.Player.Api;
 using UnityEngine;
-using Zenject;
 
 namespace App.Domains.Player.Impl
 {
@@ -11,17 +10,16 @@ namespace App.Domains.Player.Impl
         private readonly PlayerEntity _entity;
         private readonly IPlayerView _playerView;
         private readonly IMoveService _moveService;
-        private readonly bool _isLocal;
 
         public int Id => _entity.Id;
+        public float Speed => 2f;
+        public Vector2 Position => _playerView.Position;
 
-        public PlayerModel(PlayerEntity entity,
-            IFactory<Vector2, IPlayerView> playerFactory,
-            IFactory<IPlayerView, IMoveService> moveServiceFactory)
+        public PlayerModel(PlayerEntity entity, IPlayerView playerView, IMoveService moveService)
         {
             _entity = entity;
-            _playerView = playerFactory.Create(new Vector2(_entity.X, _entity.Y));
-            _moveService = moveServiceFactory.Create(_playerView);
+            _playerView = playerView;
+            _moveService = moveService;
 
             _playerView.SetName(_entity.Name);
 
@@ -33,16 +31,17 @@ namespace App.Domains.Player.Impl
             {
                 Debug.LogError($"Failed to parse color '{_entity.Color}' for player '{_entity.Id}'");
             }
+
+            _moveService.Register(this);
         }
 
         public void Dispose()
         {
-            if (_moveService is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
-
+            _moveService.Unregister(this);
             _playerView.Despawn();
         }
+
+        public void SetPosition(Vector2 position) =>
+            _playerView.SetPosition(position);
     }
 }

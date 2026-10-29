@@ -5,5 +5,6 @@ namespace App.Domains.Player.Api
     public interface IPlayerModelFactory
     {
         IPlayerModel CreateLocalPlayer(PlayerEntity entity);
+        IPlayerModel CreateRemotePlayer(PlayerEntity entity);
     }
 }
