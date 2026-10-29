@@ -1,3 +1,4 @@
+using App.Domains.Player.Api;
 using App.Domains.Player.Impl;
 using UnityEngine;
 using Zenject;
@@ -11,8 +12,10 @@ namespace App.Installers
 
         public override void InstallBindings()
         {
-            Container.BindInterfacesTo<Boot>().AsSingle().WithArguments(_root);
-            Container.BindInterfacesTo<PlayerFactory>().AsSingle().WithArguments(_playerPrefab);
+            Container.BindInterfacesTo<Boot>().AsSingle();
+            Container.BindInterfacesTo<PlayerFactory>().AsSingle().WithArguments(_playerPrefab, _root);
+            Container.BindInterfacesTo<InputService>().AsSingle();
+            Container.BindIFactory<IPlayerView, IMoveService>().To<LocalMoveService>().AsSingle();
         }
     }
 }

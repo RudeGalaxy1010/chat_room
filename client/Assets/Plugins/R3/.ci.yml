@@ -1,0 +1,13 @@
+R3:
+  stage: deploy
+  tags:
+    - docker
+  script:
+    - cd R3
+    - echo "//nexus.gearwap.ru/repository/npm-internal/:_authToken=${NEXUS_TOKEN}">.npmrc
+    - npm publish
+  only:
+    refs:
+      - main
+    changes:
+      - R3/**/*

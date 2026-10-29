@@ -2,7 +2,9 @@
     "name": "App",
     "rootNamespace": "",
     "references": [
+        "Unity.InputSystem",
         "Unity.TextMeshPro",
+        "R3.Unity",
         "Zenject"
     ],
     "includePlatforms": [],

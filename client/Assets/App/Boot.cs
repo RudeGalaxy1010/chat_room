@@ -1,23 +1,36 @@
+using System;
 using App.Domains.Player.Api;
 using UnityEngine;
 using Zenject;
 
 namespace App
 {
-    public class Boot : IInitializable
+    public class Boot : IInitializable, IDisposable
     {
-        private readonly IFactory<Vector2, Transform, IPlayerView> _playerFactory;
-        private readonly Transform _root;
+        private readonly IFactory<Vector2, IPlayerView> _playerFactory;
+        private readonly IFactory<IPlayerView, IMoveService> _moveServiceFactory;
 
-        public Boot(IFactory<Vector2, Transform, IPlayerView> playerFactory, Transform root)
+        private IMoveService? _moveService;
+
+        public Boot(IFactory<Vector2, IPlayerView> playerFactory,
+            IFactory<IPlayerView, IMoveService> moveServiceFactory)
         {
             _playerFactory = playerFactory;
-            _root = root;
+            _moveServiceFactory = moveServiceFactory;
         }
 
         public void Initialize()
         {
-            IPlayerView player = _playerFactory.Create(Vector2.zero, _root);
+            IPlayerView player = _playerFactory.Create(Vector2.zero);
+            _moveService = _moveServiceFactory.Create(player);
+        }
+
+        public void Dispose()
+        {
+            if (_moveService is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
     }
 }

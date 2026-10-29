@@ -10,7 +10,7 @@ namespace App.Domains.Player.Impl
         [SerializeField] private TMP_Text _nameLabel = null!;
         [SerializeField] private SpriteRenderer _spriteRenderer = null!;
 
-        public Vector3 Position => _transform.position;
+        public Vector2 Position => _transform.position;
 
         public void SetPosition(Vector2 position) =>
             _transform.position = position;

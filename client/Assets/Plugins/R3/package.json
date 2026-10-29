@@ -1,0 +1,34 @@
+{
+  "name": "com.geargames.r3",
+  "displayName": "R3",
+  "version": "1.0.0-1.3.0",
+  "unity": "2021.3",
+  "description": "Reactive Extensions for Unity.",
+  "dependencies": {
+    "com.unity.modules.imgui": "1.0.0"
+  },
+  "documentationUrl": "https://github.com/Cysharp/R3",
+  "keywords": [
+    "rx",
+    "event",
+    "reactive"
+  ],
+  "license": "MIT",
+  "category": "Reactive",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.gearwap.ru/gg/gg_unity_packages.git",
+    "directory": "R3"
+  },
+  "publishConfig": {
+    "registry": "https://nexus.gearwap.ru/repository/npm-internal/"
+  },
+  "samples": [
+    {
+      "displayName": "R3 Examples",
+      "description": "Содержит примеры использования R3",
+      "path": "R3.Unity/Examples~/"
+    }
+  ],
+  "_fingerprint": "8b305d3b691372bc0af148279ca699acad4205f6"
+}
