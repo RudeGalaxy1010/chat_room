@@ -1,0 +1,27 @@
+{
+    "name": "App.Tests",
+    "rootNamespace": "App.Tests",
+    "references": [
+        "App",
+        "R3.Unity",
+        "Zenject"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "NSubstitute.dll",
+        "R3.dll",
+        "Zenject-usage.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
