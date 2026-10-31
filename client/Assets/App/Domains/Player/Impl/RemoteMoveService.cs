@@ -1,39 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using App.Domains.Network.Api;
+using App.Domains.Network.Impl.Messages;
 using App.Domains.Player.Api;
-using R3;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace App.Domains.Player.Impl
 {
     public class RemoteMoveService : IRemoteMoveService, IDisposable
     {
+        private readonly IMessageService _messageService;
         private readonly Dictionary<int, IPlayerModel> _players = new Dictionary<int, IPlayerModel>();
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-        public RemoteMoveService()
+        public RemoteMoveService(IMessageService messageService)
         {
-            Observable
-                .EveryUpdate()
-                .Subscribe(_ =>
-                {
-                    List<int> keys = _players.Keys.ToList();
-
-                    for (int i = 0; i < keys.Count; i++)
-                    {
-                        Vector2 shift = new Vector2(Random.value - 0.5f, Random.value - 0.5f);
-                        IPlayerModel player = _players[keys[i]];
-                        Vector2 position = player.Position + shift * player.Speed * Time.deltaTime;
-                        ApplyMove(player.Id, position);
-                    }
-                })
-                .AddTo(_disposables);
+            _messageService = messageService;
+            _messageService.Register(MessageType.UpdatePosition, OnUpdatePosition);
         }
 
         public void Dispose() =>
-            _disposables.Dispose();
+            _messageService.Unregister(MessageType.UpdatePosition, OnUpdatePosition);
+
+        private void OnUpdatePosition(Response response)
+        {
+            UpdatePositionResponse updatePositionResponse = (UpdatePositionResponse)response;
+
+            if (updatePositionResponse.IsOk)
+            {
+                Vector2 position = new Vector2(updatePositionResponse.X, updatePositionResponse.Y);
+                ApplyMove(updatePositionResponse.Id, position);
+            }
+        }
 
         private void ApplyMove(int id, Vector2 position) =>
             _players[id].SetPosition(position);

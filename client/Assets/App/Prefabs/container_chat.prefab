@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _chatMessageViewPrefab: {fileID: 5982849267521068386, guid: ab3f956eabcafdf44870989dc755b520, type: 3}
-  _inputView: {fileID: 1997747793498871763}
+  _inputView: {fileID: 3713872236999659725}
   _messagesRoot: {fileID: 1767846732324469335}
 --- !u!1 &2297623355971114544
 GameObject:
@@ -662,15 +662,15 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8a5ecc2a605ab94280e7da8e281de04, type: 3}
---- !u!114 &1997747793498871763 stripped
+--- !u!114 &3713872236999659725 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7748707483037533232, guid: f8a5ecc2a605ab94280e7da8e281de04, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4880721606969901870, guid: f8a5ecc2a605ab94280e7da8e281de04, type: 3}
   m_PrefabInstance: {fileID: 8084415903431594979}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88eb0d398bcf49cab48f53014dbc1058, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e146aafc49b4b869f7f7785ec5196cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &5865999372390794088 stripped

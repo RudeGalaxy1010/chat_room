@@ -16,7 +16,7 @@ namespace App.Installers
             InstallPlayer(Container);
             InstallChat(Container);
 
-            Container.BindInterfacesTo<Boot>().AsSingle();
+            Container.BindInterfacesTo<MainSceneBoot>().AsSingle();
         }
 
         private void InstallPlayer(DiContainer container)

@@ -4,6 +4,8 @@
     "references": [
         "Unity.InputSystem",
         "Unity.TextMeshPro",
+        "colyseus.nativewebsocket",
+        "UniTask",
         "R3.Unity",
         "Zenject"
     ],

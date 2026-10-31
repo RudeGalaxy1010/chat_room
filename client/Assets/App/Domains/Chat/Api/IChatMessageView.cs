@@ -1,4 +1,6 @@
-﻿namespace App.Domains.Chat.Api
+﻿using App.Domains.UIManagement.Api;
+
+namespace App.Domains.Chat.Api
 {
     public interface IChatMessageView : IView
     {
