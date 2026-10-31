@@ -12,23 +12,35 @@ namespace App.Installers
         [SerializeField] private Transform _root = null!;
         [SerializeField] private PlayerView _playerPrefab = null!;
         [SerializeField] private ChatView _chatView = null!;
+        [SerializeField] private LeaveButtonView _leaveButton = null!;
 
         public override void InstallBindings()
         {
             InstallPlayer(Container);
             InstallChat(Container);
 
-            Container.BindInterfacesTo<MainSceneBoot>().AsSingle();
+            Container
+                .BindInterfacesTo<MainSceneBoot>()
+                .AsSingle()
+                .WithArguments(_leaveButton);
         }
 
         private void InstallPlayer(DiContainer container)
         {
-            container.BindInterfacesTo<PlayerFactory>().AsSingle().WithArguments(_playerPrefab, _root);
+            container
+                .BindInterfacesTo<PlayerViewFactory>()
+                .AsSingle()
+                .WithArguments(_playerPrefab, _root);
+
+            container
+                .BindIFactory<PlayerEntity, IPlayerView, IPlayerModel>()
+                .To<PlayerModel>()
+                .AsSingle();
+
             container.BindInterfacesTo<InputService>().AsSingle();
             container.BindInterfacesTo<LocalMoveService>().AsSingle();
             container.BindInterfacesTo<RemoteMoveService>().AsSingle();
-            container.BindIFactory<PlayerEntity, IPlayerView, IPlayerModel>().To<PlayerModel>().AsSingle();
-            container.BindInterfacesTo<PlayerModelFactory>().AsSingle();
+            container.BindInterfacesTo<PlayerFactory>().AsSingle();
         }
 
         private void InstallChat(DiContainer container)

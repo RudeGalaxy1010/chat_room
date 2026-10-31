@@ -78,6 +78,9 @@ namespace App.Domains.Network.Impl
                 case MessageType.Join:
                     response = _messageEncoder.Decode<JoinResponse>(message.Data);
                     break;
+                case MessageType.Leave:
+                    response = _messageEncoder.Decode<LeaveResponse>(message.Data);
+                    break;
                 case MessageType.UpdatePosition:
                     response = _messageEncoder.Decode<UpdatePositionResponse>(message.Data);
                     break;

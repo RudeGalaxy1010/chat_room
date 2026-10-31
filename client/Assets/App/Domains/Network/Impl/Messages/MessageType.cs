@@ -7,5 +7,6 @@
         Join = 2,
         UpdatePosition = 3,
         ChatMessage = 4,
+        Leave = 5,
     }
 }

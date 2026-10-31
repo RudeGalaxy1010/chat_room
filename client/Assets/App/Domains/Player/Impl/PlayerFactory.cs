@@ -1,21 +1,49 @@
-﻿using App.Domains.Player.Api;
+﻿using App.Domains.Network.Impl.Messages;
+using App.Domains.Player.Api;
 using UnityEngine;
 using Zenject;
 
 namespace App.Domains.Player.Impl
 {
-    public class PlayerFactory : IFactory<Vector2, IPlayerView>
+    public class PlayerFactory : IPlayerFactory
     {
-        private readonly PlayerView _playerPrefab;
-        private readonly Transform _parent;
+        private readonly IFactory<Vector2, IPlayerView> _playerViewFactory;
+        private readonly IFactory<PlayerEntity, IPlayerView, IPlayerModel> _playerModelFactory;
+        private readonly ILocalMoveService _localMoveService;
+        private readonly IRemoteMoveService _remoteMoveService;
 
-        public PlayerFactory(PlayerView playerPrefab, Transform parent)
+        public PlayerFactory(
+            IFactory<Vector2, IPlayerView> playerViewFactory,
+            IFactory<PlayerEntity, IPlayerView, IPlayerModel> playerModelFactory,
+            ILocalMoveService localMoveService,
+            IRemoteMoveService remoteMoveService)
         {
-            _playerPrefab = playerPrefab;
-            _parent = parent;
+            _playerViewFactory = playerViewFactory;
+            _playerModelFactory = playerModelFactory;
+            _localMoveService = localMoveService;
+            _remoteMoveService = remoteMoveService;
         }
 
-        public IPlayerView Create(Vector2 position) =>
-            Object.Instantiate(_playerPrefab, position, Quaternion.identity, _parent);
+        public IPlayerModel CreateLocalPlayer(PlayerEntity entity)
+        {
+            IPlayerModel player = CreatePlayer(entity);
+            _localMoveService.Register(player);
+            _remoteMoveService.Register(player);
+            return player;
+        }
+
+        public IPlayerModel CreateRemotePlayer(PlayerEntity entity)
+        {
+            IPlayerModel player = CreatePlayer(entity);
+            _remoteMoveService.Register(player);
+            return player;
+        }
+
+        private IPlayerModel CreatePlayer(PlayerEntity entity)
+        {
+            Vector2 position = new Vector2(entity.X, entity.Y);
+            IPlayerView view = _playerViewFactory.Create(position);
+            return _playerModelFactory.Create(entity, view);
+        }
     }
 }

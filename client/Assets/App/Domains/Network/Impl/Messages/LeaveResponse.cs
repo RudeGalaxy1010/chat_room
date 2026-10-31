@@ -1,0 +1,10 @@
+using System;
+
+namespace App.Domains.Network.Impl.Messages
+{
+    [Serializable]
+    public class LeaveResponse : Response
+    {
+        public int Id;
+    }
+}
