@@ -1,4 +1,5 @@
 ﻿using App.Domains.UIManagement.Api;
+using UnityEngine;
 
 namespace App.Domains.Chat.Api
 {
@@ -6,6 +7,6 @@ namespace App.Domains.Chat.Api
     {
         ITextInputView ChatInputView { get; }
 
-        void AddMessage(string nickName, string message);
+        void AddMessage(string nickName, Color nickNameColor, string message);
     }
 }

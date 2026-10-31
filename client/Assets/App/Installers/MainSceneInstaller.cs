@@ -1,4 +1,6 @@
 using App.Domains.Chat.Impl;
+using App.Domains.Network.Impl.Messages;
+using App.Domains.Player.Api;
 using App.Domains.Player.Impl;
 using UnityEngine;
 using Zenject;
@@ -25,6 +27,7 @@ namespace App.Installers
             container.BindInterfacesTo<InputService>().AsSingle();
             container.BindInterfacesTo<LocalMoveService>().AsSingle();
             container.BindInterfacesTo<RemoteMoveService>().AsSingle();
+            container.BindIFactory<PlayerEntity, IPlayerView, IPlayerModel>().To<PlayerModel>().AsSingle();
             container.BindInterfacesTo<PlayerModelFactory>().AsSingle();
         }
 

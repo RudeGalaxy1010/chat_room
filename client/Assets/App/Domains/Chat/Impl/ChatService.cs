@@ -3,6 +3,7 @@ using App.Domains.Chat.Api;
 using App.Domains.Core.Api;
 using App.Domains.Network.Api;
 using App.Domains.Network.Impl.Messages;
+using UnityEngine;
 
 namespace App.Domains.Chat.Impl
 {
@@ -36,8 +37,8 @@ namespace App.Domains.Chat.Impl
 
             if (chatMessageResponse.IsOk)
             {
-                _chatView.AddMessage(chatMessageResponse.NickName,
-                    chatMessageResponse.Message);
+                ColorUtility.TryParseHtmlString(chatMessageResponse.Color, out Color color);
+                _chatView.AddMessage(chatMessageResponse.NickName, color, chatMessageResponse.Message);
             }
         }
 

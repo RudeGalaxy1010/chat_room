@@ -7,15 +7,19 @@ namespace App.Domains.Player.Impl
 {
     public class PlayerModelFactory : IPlayerModelFactory
     {
-        private readonly IFactory<Vector2, IPlayerView> _playerFactory;
+        private readonly IFactory<Vector2, IPlayerView> _playerViewFactory;
+        private readonly IFactory<PlayerEntity, IPlayerView, IPlayerModel> _playerModelFactory;
         private readonly ILocalMoveService _localMoveService;
         private readonly IRemoteMoveService _remoteMoveService;
 
-        public PlayerModelFactory(IFactory<Vector2, IPlayerView> playerFactory,
+        public PlayerModelFactory(
+            IFactory<Vector2, IPlayerView> playerViewFactory,
+            IFactory<PlayerEntity, IPlayerView, IPlayerModel> playerModelFactory,
             ILocalMoveService localMoveService,
             IRemoteMoveService remoteMoveService)
         {
-            _playerFactory = playerFactory;
+            _playerViewFactory = playerViewFactory;
+            _playerModelFactory = playerModelFactory;
             _localMoveService = localMoveService;
             _remoteMoveService = remoteMoveService;
         }
@@ -38,8 +42,8 @@ namespace App.Domains.Player.Impl
         private IPlayerModel CreatePlayer(PlayerEntity entity)
         {
             Vector2 position = new Vector2(entity.X, entity.Y);
-            IPlayerView view = _playerFactory.Create(position);
-            return new PlayerModel(entity, view);
+            IPlayerView view = _playerViewFactory.Create(position);
+            return _playerModelFactory.Create(entity, view);
         }
     }
 }

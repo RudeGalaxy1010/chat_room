@@ -1,4 +1,6 @@
-﻿using App.Domains.Player.Api;
+﻿using App.Domains.Chat.Api;
+using App.Domains.Chat.Impl;
+using App.Domains.Player.Api;
 using TMPro;
 using UnityEngine;
 
@@ -9,8 +11,10 @@ namespace App.Domains.Player.Impl
         [SerializeField] private Transform _transform = null!;
         [SerializeField] private TMP_Text _nameLabel = null!;
         [SerializeField] private SpriteRenderer _spriteRenderer = null!;
+        [SerializeField] private ChatBubbleView _chatBubbleView = null!;
 
         public Vector2 Position => _transform.position;
+        public IChatBubbleView ChatBubbleView => _chatBubbleView;
 
         public void SetPosition(Vector2 position) =>
             _transform.position = position;

@@ -13,10 +13,10 @@ namespace App.Domains.Chat.Impl
 
         public ITextInputView ChatInputView => _inputView;
 
-        public void AddMessage(string nickName, string message)
+        public void AddMessage(string nickName, Color nickNameColor, string message)
         {
             IChatMessageView messageView = Instantiate(_chatMessageViewPrefab, _messagesRoot);
-            messageView.SetInfo(nickName, message);
+            messageView.SetInfo(nickName, nickNameColor, message);
         }
     }
 }

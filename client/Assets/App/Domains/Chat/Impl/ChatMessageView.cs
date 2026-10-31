@@ -10,20 +10,11 @@ namespace App.Domains.Chat.Impl
         [SerializeField] private TMP_Text _nameLabel = null!;
         [SerializeField] private TMP_Text _textLabel = null!;
 
-        public void SetInfo(string nickName, string message)
+        public void SetInfo(string nickName, Color nickNameColor, string message)
         {
+            _nameLabel.color = nickNameColor;
             _nameLabel.text = $"{nickName}: ";
             _textLabel.text = message;
-        }
-
-        public void Despawn()
-        {
-            if (this == null)
-            {
-                return;
-            }
-
-            Destroy(gameObject);
         }
     }
 }
