@@ -32,8 +32,13 @@ namespace App.Domains.Player.Impl
             }
         }
 
-        private void ApplyMove(int id, Vector2 position) =>
-            _players[id].SetPosition(position);
+        private void ApplyMove(int id, Vector2 position)
+        {
+            if (_players.TryGetValue(id, out IPlayerModel player))
+            {
+                player.SetPosition(position);
+            }
+        }
 
         public void Register(IPlayerModel player) =>
             _players[player.Id] = player;

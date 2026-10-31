@@ -44,7 +44,7 @@ namespace App.Domains.Chat.Impl
 
         private void SendMessage(string value)
         {
-            if (value == string.Empty)
+            if (string.IsNullOrWhiteSpace(value))
             {
                 return;
             }

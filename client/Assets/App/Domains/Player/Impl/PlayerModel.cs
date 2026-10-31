@@ -15,6 +15,7 @@ namespace App.Domains.Player.Impl
         private readonly PlayerEntity _entity;
         private readonly IPlayerView _playerView;
         private readonly IMessageService _messageService;
+        private readonly Action<IPlayerModel> _unregisterMovement;
 
         private CancellationTokenSource? _cancellationTokenSource;
 
@@ -24,11 +25,13 @@ namespace App.Domains.Player.Impl
 
         public PlayerModel(PlayerEntity entity,
             IPlayerView playerView,
-            IMessageService messageService)
+            IMessageService messageService,
+            Action<IPlayerModel> unregisterMovement)
         {
             _entity = entity;
             _playerView = playerView;
             _messageService = messageService;
+            _unregisterMovement = unregisterMovement;
 
             _playerView.SetName(_entity.Name);
 
@@ -46,6 +49,7 @@ namespace App.Domains.Player.Impl
 
         public void Dispose()
         {
+            _unregisterMovement(this);
             _cancellationTokenSource?.Cancel();
             _messageService.Unregister(MessageType.ChatMessage, OnChatMessageReceived);
             _playerView.Despawn();

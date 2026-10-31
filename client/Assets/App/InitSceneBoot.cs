@@ -17,6 +17,8 @@ namespace App
         private readonly ITextInputView _textInputView;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
+        private bool _isConnectRequestPending;
+
         public InitSceneBoot(INetworkService networkService,
             IMessageService messageService,
             ISceneLoadService sceneLoadService,
@@ -54,6 +56,8 @@ namespace App
             else
             {
                 _textInputView.SetPlaceholderText("Enter ip:port...");
+                _isConnectRequestPending = false;
+                _messageService.Unregister(MessageType.Connect, OnConnected);
             }
         }
 
@@ -61,6 +65,12 @@ namespace App
         {
             if (_networkService.IsConnected.CurrentValue)
             {
+                if (_isConnectRequestPending)
+                {
+                    return;
+                }
+
+                _isConnectRequestPending = true;
                 _messageService.Register(MessageType.Connect, OnConnected);
                 _messageService.Send(new ConnectRequest
                 {
@@ -69,11 +79,11 @@ namespace App
             }
             else
             {
-                string[] address = text.Split(':');
+                string[] address = text.Trim().Split(':');
 
                 if (address.Length != 2 ||
                     string.IsNullOrWhiteSpace(address[0]) ||
-                    !int.TryParse(address[1], out int port) ||
+                    !int.TryParse(address[1].Trim(), out int port) ||
                     port is < 1 or > 65535)
                 {
                     Debug.LogError("Invalid server address. Expected host:port");
@@ -86,6 +96,7 @@ namespace App
 
         private void OnConnected(Response response)
         {
+            _isConnectRequestPending = false;
             _messageService.Unregister(MessageType.Connect, OnConnected);
             ConnectResponse connectResponse = (ConnectResponse)response;
 

@@ -1,4 +1,5 @@
-﻿using App.Domains.Network.Impl.Messages;
+﻿using System;
+using App.Domains.Network.Impl.Messages;
 using App.Domains.Player.Api;
 using UnityEngine;
 using Zenject;
@@ -8,13 +9,13 @@ namespace App.Domains.Player.Impl
     public class PlayerFactory : IPlayerFactory
     {
         private readonly IFactory<Vector2, IPlayerView> _playerViewFactory;
-        private readonly IFactory<PlayerEntity, IPlayerView, IPlayerModel> _playerModelFactory;
+        private readonly IFactory<PlayerEntity, IPlayerView, Action<IPlayerModel>, IPlayerModel> _playerModelFactory;
         private readonly ILocalMoveService _localMoveService;
         private readonly IRemoteMoveService _remoteMoveService;
 
         public PlayerFactory(
             IFactory<Vector2, IPlayerView> playerViewFactory,
-            IFactory<PlayerEntity, IPlayerView, IPlayerModel> playerModelFactory,
+            IFactory<PlayerEntity, IPlayerView, Action<IPlayerModel>, IPlayerModel> playerModelFactory,
             ILocalMoveService localMoveService,
             IRemoteMoveService remoteMoveService)
         {
@@ -25,25 +26,30 @@ namespace App.Domains.Player.Impl
         }
 
         public IPlayerModel CreateLocalPlayer(PlayerEntity entity)
-        {
-            IPlayerModel player = CreatePlayer(entity);
-            _localMoveService.Register(player);
-            _remoteMoveService.Register(player);
-            return player;
-        }
+            => CreatePlayer(entity, _localMoveService, _remoteMoveService);
 
         public IPlayerModel CreateRemotePlayer(PlayerEntity entity)
-        {
-            IPlayerModel player = CreatePlayer(entity);
-            _remoteMoveService.Register(player);
-            return player;
-        }
+            => CreatePlayer(entity, _remoteMoveService);
 
-        private IPlayerModel CreatePlayer(PlayerEntity entity)
+        private IPlayerModel CreatePlayer(PlayerEntity entity, params IMoveService[] moveServices)
         {
             Vector2 position = new Vector2(entity.X, entity.Y);
             IPlayerView view = _playerViewFactory.Create(position);
-            return _playerModelFactory.Create(entity, view);
+            Action<IPlayerModel> unregister = player =>
+            {
+                for (int i = 0; i < moveServices.Length; i++)
+                {
+                    moveServices[i].Unregister(player);
+                }
+            };
+            IPlayerModel player = _playerModelFactory.Create(entity, view, unregister);
+
+            for (int i = 0; i < moveServices.Length; i++)
+            {
+                moveServices[i].Register(player);
+            }
+
+            return player;
         }
     }
 }

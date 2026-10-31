@@ -1,3 +1,4 @@
+using System;
 using App.Domains.Chat.Impl;
 using App.Domains.Network.Impl.Messages;
 using App.Domains.Player.Api;
@@ -33,7 +34,7 @@ namespace App.Installers
                 .WithArguments(_playerPrefab, _root);
 
             container
-                .BindIFactory<PlayerEntity, IPlayerView, IPlayerModel>()
+                .BindIFactory<PlayerEntity, IPlayerView, Action<IPlayerModel>, IPlayerModel>()
                 .To<PlayerModel>()
                 .AsSingle();
 

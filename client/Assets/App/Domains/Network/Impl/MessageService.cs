@@ -36,7 +36,10 @@ namespace App.Domains.Network.Impl
                 _handlers[type] = new List<Action<Response>>();
             }
 
-            _handlers[type].Add(handler);
+            if (!_handlers[type].Contains(handler))
+            {
+                _handlers[type].Add(handler);
+            }
         }
 
         public void Unregister(MessageType type, Action<Response> handler)
@@ -55,12 +58,19 @@ namespace App.Domains.Network.Impl
                 return;
             }
 
-            MessageType messageType = GetMessageType(message);
+            MessageType? messageType = GetMessageType(message);
+
+            if (!messageType.HasValue)
+            {
+                Debug.LogError("Unsupported request type: " + message.GetType().Name);
+                return;
+            }
+
             string data = _messageEncoder.Encode(message);
 
             _networkService.SendMessage(new MessageWrapper
             {
-                Type = (int)messageType,
+                Type = (int)messageType.Value,
                 Data = data,
             });
         }
@@ -70,44 +80,62 @@ namespace App.Domains.Network.Impl
             MessageType messageType = GetMessageType(message);
             Response response;
 
-            switch (messageType)
+            try
             {
-                case MessageType.Connect:
-                    response = _messageEncoder.Decode<ConnectResponse>(message.Data);
-                    break;
-                case MessageType.Join:
-                    response = _messageEncoder.Decode<JoinResponse>(message.Data);
-                    break;
-                case MessageType.Leave:
-                    response = _messageEncoder.Decode<LeaveResponse>(message.Data);
-                    break;
-                case MessageType.UpdatePosition:
-                    response = _messageEncoder.Decode<UpdatePositionResponse>(message.Data);
-                    break;
-                case MessageType.ChatMessage:
-                    response = _messageEncoder.Decode<ChatMessageResponse>(message.Data);
-                    break;
-                default:
-                    Debug.LogError("Unknown message type: " + messageType);
-                    return;
+                switch (messageType)
+                {
+                    case MessageType.Connect:
+                        response = _messageEncoder.Decode<ConnectResponse>(message.Data);
+                        break;
+                    case MessageType.Join:
+                        response = _messageEncoder.Decode<JoinResponse>(message.Data);
+                        break;
+                    case MessageType.Leave:
+                        response = _messageEncoder.Decode<LeaveResponse>(message.Data);
+                        break;
+                    case MessageType.UpdatePosition:
+                        response = _messageEncoder.Decode<UpdatePositionResponse>(message.Data);
+                        break;
+                    case MessageType.ChatMessage:
+                        response = _messageEncoder.Decode<ChatMessageResponse>(message.Data);
+                        break;
+                    default:
+                        Debug.LogError("Unknown message type: " + messageType);
+                        return;
+                }
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"Failed to decode message type {message.Type}: {exception}");
+                return;
             }
 
             if (_handlers.TryGetValue(messageType, out List<Action<Response>> handlers))
             {
-                for (int i = 0; i < handlers.Count; i++)
+                // Taking a snapshot in case of list modified during Invoke()
+                List<Action<Response>> handlersCopy = new List<Action<Response>>(handlers);
+
+                for (int i = 0; i < handlersCopy.Count; i++)
                 {
-                    handlers[i].Invoke(response);
+                    try
+                    {
+                        handlersCopy[i].Invoke(response);
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.LogError($"Message handler failed for type {messageType}: {exception}");
+                    }
                 }
             }
         }
 
-        private MessageType GetMessageType(Request message) => message.GetType().Name switch
+        private MessageType? GetMessageType(Request message) => message.GetType().Name switch
         {
             nameof(ConnectRequest) => MessageType.Connect,
             nameof(ReadyRequest) => MessageType.Ready,
             nameof(UpdatePositionRequest) => MessageType.UpdatePosition,
             nameof(ChatMessageRequest) => MessageType.ChatMessage,
-            _ => (MessageType)(-1),
+            _ => null,
         };
 
         private MessageType GetMessageType(MessageWrapper message) =>

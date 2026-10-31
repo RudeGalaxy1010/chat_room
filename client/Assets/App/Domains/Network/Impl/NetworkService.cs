@@ -94,7 +94,8 @@ namespace App.Domains.Network.Impl
         {
             if (_webSocket?.State != WebSocketState.Open)
             {
-                throw new InvalidOperationException("Web socket is not connected");
+                Debug.LogWarning("Web socket is not connected");
+                return;
             }
 
             string text = $"{message.Type}{SplitSymbol}{message.Data}";
@@ -143,6 +144,7 @@ namespace App.Domains.Network.Impl
             Debug.Log($"Received: {message}");
 
             int separatorIndex = message.IndexOf(SplitSymbol);
+
             if (separatorIndex <= 0 || separatorIndex == message.Length - 1)
             {
                 Debug.LogError("Invalid message format: " + message);

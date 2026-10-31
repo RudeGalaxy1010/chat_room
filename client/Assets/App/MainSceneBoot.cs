@@ -5,6 +5,7 @@ using App.Domains.Core.Api;
 using App.Domains.Network.Api;
 using App.Domains.Network.Impl.Messages;
 using App.Domains.Player.Api;
+using R3;
 using UnityEngine;
 using Zenject;
 
@@ -19,6 +20,9 @@ namespace App
         private readonly ISceneLoadService _sceneLoadService;
         private readonly ILeaveButtonView _leaveButton;
         private readonly Dictionary<int, IPlayerModel> _players = new Dictionary<int, IPlayerModel>();
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
+        private bool _isLeaving;
 
         public MainSceneBoot(IMessageService messageService,
             INetworkService networkService,
@@ -37,6 +41,10 @@ namespace App
             _messageService.Register(MessageType.Join, OnJoin);
             _messageService.Register(MessageType.Leave, OnLeave);
             _leaveButton.OnClick += OnLeaveButtonClick;
+
+            _networkService.IsConnected
+                .Subscribe(OnConnectionChanged)
+                .AddTo(_disposables);
         }
 
         public void Initialize() =>
@@ -44,6 +52,8 @@ namespace App
 
         public void Dispose()
         {
+            _isLeaving = true;
+            _disposables.Dispose();
             _leaveButton.OnClick -= OnLeaveButtonClick;
             _messageService.Unregister(MessageType.Join, OnJoin);
             _messageService.Unregister(MessageType.Leave, OnLeave);
@@ -100,7 +110,23 @@ namespace App
 
         private void OnLeaveButtonClick()
         {
-            // Socket will be closed at dispose automatically and leave will be completed
+            _isLeaving = true;
+            _sceneLoadService.LoadScene(SceneName.Init);
+        }
+
+        private void OnConnectionChanged(bool isConnected)
+        {
+            if (isConnected)
+            {
+                return;
+            }
+
+            if (_isLeaving)
+            {
+                return;
+            }
+
+            ClearPlayers();
             _sceneLoadService.LoadScene(SceneName.Init);
         }
     }
