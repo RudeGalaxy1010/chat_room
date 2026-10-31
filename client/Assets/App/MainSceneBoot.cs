@@ -6,7 +6,6 @@ using App.Domains.Network.Api;
 using App.Domains.Network.Impl.Messages;
 using App.Domains.Player.Api;
 using R3;
-using UnityEngine;
 using Zenject;
 
 namespace App
@@ -19,6 +18,7 @@ namespace App
         private readonly IPlayerFactory _playerFactory;
         private readonly ISceneLoadService _sceneLoadService;
         private readonly ILeaveButtonView _leaveButton;
+        private readonly ILogger _logger;
         private readonly Dictionary<int, IPlayerModel> _players = new Dictionary<int, IPlayerModel>();
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
@@ -29,7 +29,8 @@ namespace App
             ILocalContext localContext,
             IPlayerFactory playerFactory,
             ISceneLoadService sceneLoadService,
-            ILeaveButtonView leaveButton)
+            ILeaveButtonView leaveButton,
+            ILogger logger)
         {
             _messageService = messageService;
             _networkService = networkService;
@@ -37,6 +38,7 @@ namespace App
             _playerFactory = playerFactory;
             _sceneLoadService = sceneLoadService;
             _leaveButton = leaveButton;
+            _logger = logger;
 
             _messageService.Register(MessageType.Join, OnJoin);
             _messageService.Register(MessageType.Leave, OnLeave);
@@ -67,7 +69,7 @@ namespace App
 
             if (!joinResponse.IsOk)
             {
-                Debug.LogError("Join response failed");
+                _logger.LogError("Join response failed");
                 return;
             }
 

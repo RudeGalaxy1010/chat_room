@@ -4,7 +4,6 @@ using App.Domains.Network.Api;
 using App.Domains.Network.Impl.Messages;
 using App.Domains.UIManagement.Api;
 using R3;
-using UnityEngine;
 using Zenject;
 
 namespace App
@@ -15,6 +14,7 @@ namespace App
         private readonly IMessageService _messageService;
         private readonly ISceneLoadService _sceneLoadService;
         private readonly ITextInputView _textInputView;
+        private readonly ILogger _logger;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         private bool _isConnectRequestPending;
@@ -22,12 +22,14 @@ namespace App
         public InitSceneBoot(INetworkService networkService,
             IMessageService messageService,
             ISceneLoadService sceneLoadService,
-            ITextInputView textInputView)
+            ITextInputView textInputView,
+            ILogger logger)
         {
             _networkService = networkService;
             _messageService = messageService;
             _sceneLoadService = sceneLoadService;
             _textInputView = textInputView;
+            _logger = logger;
 
             _networkService.IsConnected
                 .Subscribe(UpdateConnection)
@@ -86,7 +88,7 @@ namespace App
                     !int.TryParse(address[1].Trim(), out int port) ||
                     port is < 1 or > 65535)
                 {
-                    Debug.LogError("Invalid server address. Expected host:port");
+                    _logger.LogError("Invalid server address. Expected host:port");
                     return;
                 }
 
@@ -102,7 +104,7 @@ namespace App
 
             if (!connectResponse.IsOk)
             {
-                Debug.LogError("Connection failed");
+                _logger.LogError("Connection failed");
                 return;
             }
 

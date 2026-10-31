@@ -1,11 +1,11 @@
 using System;
 using System.Text;
+using App.Domains.Core.Api;
 using App.Domains.Network.Api;
 using App.Domains.Network.Impl.Messages;
 using Cysharp.Threading.Tasks;
 using NativeWebSocket;
 using R3;
-using UnityEngine;
 
 namespace App.Domains.Network.Impl
 {
@@ -16,14 +16,16 @@ namespace App.Domains.Network.Impl
         private readonly Subject<MessageWrapper> _messageQueue;
         private readonly ReactiveProperty<bool> _isConnected;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        private readonly ILogger _logger;
 
         private WebSocket? _webSocket;
 
         public Observable<MessageWrapper> MessageQueue => _messageQueue;
         public ReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
 
-        public NetworkService()
+        public NetworkService(ILogger logger)
         {
+            _logger = logger;
             _messageQueue = new Subject<MessageWrapper>().AddTo(_disposables);
             _isConnected = new ReactiveProperty<bool>().AddTo(_disposables);
         }
@@ -45,12 +47,12 @@ namespace App.Domains.Network.Impl
                 _webSocket
                     .Connect()
                     .AsUniTask()
-                    .Forget(Debug.LogException);
+                    .Forget(exception => _logger.LogError(exception.ToString()));
             }
             catch (Exception e)
             {
                 Disconnect();
-                Debug.LogException(e);
+                _logger.LogError(e.ToString());
             }
         }
 
@@ -75,7 +77,7 @@ namespace App.Domains.Network.Impl
                         webSocket.CancelConnection();
                         break;
                     case WebSocketState.Open:
-                        webSocket.Close().AsUniTask().Forget(Debug.LogException);
+                        webSocket.Close().AsUniTask().Forget(exception => _logger.LogError(exception.ToString()));
                         break;
                     case WebSocketState.Closing:
                     case WebSocketState.Closed:
@@ -86,7 +88,7 @@ namespace App.Domains.Network.Impl
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                _logger.LogError(e.ToString());
             }
         }
 
@@ -94,17 +96,17 @@ namespace App.Domains.Network.Impl
         {
             if (_webSocket?.State != WebSocketState.Open)
             {
-                Debug.LogWarning("Web socket is not connected");
+                _logger.LogError("Web socket is not connected");
                 return;
             }
 
             string text = $"{message.Type}{SplitSymbol}{message.Data}";
-            Debug.Log($"Sending: {text}");
+            _logger.Log($"Sending: {text}");
 
             _webSocket
                 .SendText(text)
                 .AsUniTask()
-                .Forget(Debug.LogException);
+                .Forget(exception => _logger.LogError(exception.ToString()));
         }
 
         private void OnConnected() =>
@@ -141,19 +143,19 @@ namespace App.Domains.Network.Impl
         private void OnMessageReceived(byte[] bytes)
         {
             string message = Encoding.UTF8.GetString(bytes);
-            Debug.Log($"Received: {message}");
+            _logger.Log($"Received: {message}");
 
             int separatorIndex = message.IndexOf(SplitSymbol);
 
             if (separatorIndex <= 0 || separatorIndex == message.Length - 1)
             {
-                Debug.LogError("Invalid message format: " + message);
+                _logger.LogError("Invalid message format: " + message);
                 return;
             }
 
             if (!int.TryParse(message.Substring(0, separatorIndex), out int type))
             {
-                Debug.LogError("Invalid message type: " + message);
+                _logger.LogError("Invalid message type: " + message);
                 return;
             }
 
@@ -164,7 +166,7 @@ namespace App.Domains.Network.Impl
             });
         }
 
-        private static void OnErrorReceived(string error) =>
-            Debug.LogError(error);
+        private void OnErrorReceived(string error) =>
+            _logger.LogError(error);
     }
 }

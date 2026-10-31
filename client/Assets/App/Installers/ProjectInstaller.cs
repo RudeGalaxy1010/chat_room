@@ -8,6 +8,7 @@ namespace App.Installers
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesTo<ConsoleLogger>().AsSingle();
             Container.BindInterfacesTo<LocalContext>().AsSingle();
             Container.BindInterfacesTo<SceneLoadService>().AsSingle();
 

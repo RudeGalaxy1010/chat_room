@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using App.Domains.Core.Api;
 using App.Domains.Network.Api;
 using App.Domains.Network.Impl.Messages;
 using R3;
-using UnityEngine;
 
 namespace App.Domains.Network.Impl
 {
@@ -11,15 +11,17 @@ namespace App.Domains.Network.Impl
     {
         private readonly INetworkService _networkService;
         private readonly IMessageEncoder _messageEncoder;
+        private readonly ILogger _logger;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         private readonly Dictionary<MessageType, List<Action<Response>>> _handlers =
             new Dictionary<MessageType, List<Action<Response>>>();
 
-        public MessageService(INetworkService networkService, IMessageEncoder messageEncoder)
+        public MessageService(INetworkService networkService, IMessageEncoder messageEncoder, ILogger logger)
         {
             _networkService = networkService;
             _messageEncoder = messageEncoder;
+            _logger = logger;
 
             _networkService.MessageQueue
                 .Subscribe(OnMessageReceived)
@@ -54,7 +56,7 @@ namespace App.Domains.Network.Impl
         {
             if (!_networkService.IsConnected.CurrentValue)
             {
-                Debug.LogError("Network service is not connected");
+                _logger.LogError("Network service is not connected");
                 return;
             }
 
@@ -62,7 +64,7 @@ namespace App.Domains.Network.Impl
 
             if (!messageType.HasValue)
             {
-                Debug.LogError("Unsupported request type: " + message.GetType().Name);
+                _logger.LogError("Unsupported request type: " + message.GetType().Name);
                 return;
             }
 
@@ -100,13 +102,13 @@ namespace App.Domains.Network.Impl
                         response = _messageEncoder.Decode<ChatMessageResponse>(message.Data);
                         break;
                     default:
-                        Debug.LogError("Unknown message type: " + messageType);
+                        _logger.LogError("Unknown message type: " + messageType);
                         return;
                 }
             }
             catch (Exception exception)
             {
-                Debug.LogError($"Failed to decode message type {message.Type}: {exception}");
+                _logger.LogError($"Failed to decode message type {message.Type}: {exception}");
                 return;
             }
 
@@ -123,7 +125,7 @@ namespace App.Domains.Network.Impl
                     }
                     catch (Exception exception)
                     {
-                        Debug.LogError($"Message handler failed for type {messageType}: {exception}");
+                        _logger.LogError($"Message handler failed for type {messageType}: {exception}");
                     }
                 }
             }

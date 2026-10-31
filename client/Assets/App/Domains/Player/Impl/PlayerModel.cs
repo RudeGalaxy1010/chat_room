@@ -5,6 +5,7 @@ using App.Domains.Network.Impl.Messages;
 using App.Domains.Player.Api;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using ILogger = App.Domains.Core.Api.ILogger;
 
 namespace App.Domains.Player.Impl
 {
@@ -16,6 +17,7 @@ namespace App.Domains.Player.Impl
         private readonly IPlayerView _playerView;
         private readonly IMessageService _messageService;
         private readonly Action<IPlayerModel> _unregisterMovement;
+        private readonly ILogger _logger;
 
         private CancellationTokenSource? _cancellationTokenSource;
 
@@ -26,12 +28,14 @@ namespace App.Domains.Player.Impl
         public PlayerModel(PlayerEntity entity,
             IPlayerView playerView,
             IMessageService messageService,
-            Action<IPlayerModel> unregisterMovement)
+            Action<IPlayerModel> unregisterMovement,
+            ILogger logger)
         {
             _entity = entity;
             _playerView = playerView;
             _messageService = messageService;
             _unregisterMovement = unregisterMovement;
+            _logger = logger;
 
             _playerView.SetName(_entity.Name);
 
@@ -41,7 +45,7 @@ namespace App.Domains.Player.Impl
             }
             else
             {
-                Debug.LogError($"Failed to parse color '{_entity.Color}' for player '{_entity.Id}'");
+                _logger.LogError($"Failed to parse color '{_entity.Color}' for player '{_entity.Id}'");
             }
 
             _messageService.Register(MessageType.ChatMessage, OnChatMessageReceived);
