@@ -12,7 +12,7 @@ namespace App.Domains.Chat.Impl
 
         public void SetInfo(string nickName, string message)
         {
-            _nameLabel.text = nickName;
+            _nameLabel.text = $"{nickName}: ";
             _textLabel.text = message;
         }
 

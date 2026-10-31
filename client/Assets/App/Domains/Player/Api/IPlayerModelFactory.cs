@@ -1,5 +1,4 @@
-﻿using App.Domains.Network.Impl;
-using App.Domains.Network.Impl.Messages;
+﻿using App.Domains.Network.Impl.Messages;
 
 namespace App.Domains.Player.Api
 {

@@ -28,13 +28,10 @@ namespace App.Domains.Player.Impl
                 .Interval(TimeSpan.FromSeconds(SyncPeriod))
                 .Subscribe(_ => SyncPositions())
                 .AddTo(_disposables);
-
-            _messageService.Register(MessageType.UpdatePosition, OnUpdatePosition);
         }
 
         public void Dispose()
         {
-            _messageService.Unregister(MessageType.UpdatePosition, OnUpdatePosition);
             _disposables.Dispose();
             _players.Clear();
         }
@@ -56,28 +53,6 @@ namespace App.Domains.Player.Impl
             {
                 IPlayerModel player = _players[i];
                 player.SetPosition(player.Position + input * player.Speed * Time.deltaTime);
-            }
-        }
-
-        private void OnUpdatePosition(Response response)
-        {
-            UpdatePositionResponse updatePositionResponse = (UpdatePositionResponse)response;
-
-            if (!updatePositionResponse.IsOk)
-            {
-                return;
-            }
-
-            for (int i = 0; i < _players.Count; i++)
-            {
-                IPlayerModel player = _players[i];
-
-                if (player.Id == updatePositionResponse.Id)
-                {
-                    Vector2 position = new Vector2(updatePositionResponse.X, updatePositionResponse.Y);
-                    player.SetPosition(position);
-                    return;
-                }
             }
         }
 

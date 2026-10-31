@@ -1,5 +1,4 @@
 ﻿using System;
-using App.Domains.Network.Impl;
 using App.Domains.Network.Impl.Messages;
 using App.Domains.Player.Api;
 using UnityEngine;
@@ -10,17 +9,15 @@ namespace App.Domains.Player.Impl
     {
         private readonly PlayerEntity _entity;
         private readonly IPlayerView _playerView;
-        private readonly IMoveService _moveService;
 
         public int Id => _entity.Id;
         public float Speed => 2f;
         public Vector2 Position => _playerView.Position;
 
-        public PlayerModel(PlayerEntity entity, IPlayerView playerView, IMoveService moveService)
+        public PlayerModel(PlayerEntity entity, IPlayerView playerView)
         {
             _entity = entity;
             _playerView = playerView;
-            _moveService = moveService;
 
             _playerView.SetName(_entity.Name);
 
@@ -32,15 +29,10 @@ namespace App.Domains.Player.Impl
             {
                 Debug.LogError($"Failed to parse color '{_entity.Color}' for player '{_entity.Id}'");
             }
-
-            _moveService.Register(this);
         }
 
-        public void Dispose()
-        {
-            _moveService.Unregister(this);
+        public void Dispose() =>
             _playerView.Despawn();
-        }
 
         public void SetPosition(Vector2 position) =>
             _playerView.SetPosition(position);

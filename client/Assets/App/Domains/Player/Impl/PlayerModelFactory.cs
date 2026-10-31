@@ -1,5 +1,4 @@
-﻿using App.Domains.Network.Impl;
-using App.Domains.Network.Impl.Messages;
+﻿using App.Domains.Network.Impl.Messages;
 using App.Domains.Player.Api;
 using UnityEngine;
 using Zenject;
@@ -21,17 +20,26 @@ namespace App.Domains.Player.Impl
             _remoteMoveService = remoteMoveService;
         }
 
-        public IPlayerModel CreateLocalPlayer(PlayerEntity entity) =>
-            CreatePlayer(entity, _localMoveService);
+        public IPlayerModel CreateLocalPlayer(PlayerEntity entity)
+        {
+            IPlayerModel player = CreatePlayer(entity);
+            _localMoveService.Register(player);
+            _remoteMoveService.Register(player);
+            return player;
+        }
 
-        public IPlayerModel CreateRemotePlayer(PlayerEntity entity) =>
-            CreatePlayer(entity, _remoteMoveService);
+        public IPlayerModel CreateRemotePlayer(PlayerEntity entity)
+        {
+            IPlayerModel player = CreatePlayer(entity);
+            _remoteMoveService.Register(player);
+            return player;
+        }
 
-        private IPlayerModel CreatePlayer(PlayerEntity entity, IMoveService moveService)
+        private IPlayerModel CreatePlayer(PlayerEntity entity)
         {
             Vector2 position = new Vector2(entity.X, entity.Y);
             IPlayerView view = _playerFactory.Create(position);
-            return new PlayerModel(entity, view, moveService);
+            return new PlayerModel(entity, view);
         }
     }
 }
