@@ -26,7 +26,7 @@ namespace App.Domains.Player.Impl
         }
 
         public IPlayerModel CreateLocalPlayer(PlayerEntity entity)
-            => CreatePlayer(entity, _localMoveService, _remoteMoveService);
+            => CreatePlayer(entity, _localMoveService);
 
         public IPlayerModel CreateRemotePlayer(PlayerEntity entity)
             => CreatePlayer(entity, _remoteMoveService);
@@ -35,14 +35,8 @@ namespace App.Domains.Player.Impl
         {
             Vector2 position = new Vector2(entity.X, entity.Y);
             IPlayerView view = _playerViewFactory.Create(position);
-            Action<IPlayerModel> unregister = player =>
-            {
-                for (int i = 0; i < moveServices.Length; i++)
-                {
-                    moveServices[i].Unregister(player);
-                }
-            };
-            IPlayerModel player = _playerModelFactory.Create(entity, view, unregister);
+
+            IPlayerModel player = _playerModelFactory.Create(entity, view, Unregister);
 
             for (int i = 0; i < moveServices.Length; i++)
             {
@@ -50,6 +44,14 @@ namespace App.Domains.Player.Impl
             }
 
             return player;
+
+            void Unregister(IPlayerModel model)
+            {
+                for (int i = 0; i < moveServices.Length; i++)
+                {
+                    moveServices[i].Unregister(model);
+                }
+            }
         }
     }
 }

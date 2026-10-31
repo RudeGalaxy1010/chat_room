@@ -10,7 +10,8 @@ namespace App.Domains.Player.Impl
 {
     public class LocalMoveService : ILocalMoveService, IDisposable
     {
-        private const float SyncPeriod = 1f;
+        private const float ServerCorrectionDistance = 0.5f;
+        private const float PositionSyncInterval = 0.2f;
 
         private readonly IMessageService _messageService;
         private readonly List<IPlayerModel> _players = new List<IPlayerModel>();
@@ -21,17 +22,20 @@ namespace App.Domains.Player.Impl
             _messageService = messageService;
 
             inputService.Move
-                .Subscribe(ApplyMove)
+                .Subscribe(ApplyInput)
                 .AddTo(_disposables);
 
             Observable
-                .Interval(TimeSpan.FromSeconds(SyncPeriod))
-                .Subscribe(_ => SyncPositions())
+                .Interval(TimeSpan.FromSeconds(PositionSyncInterval))
+                .Subscribe(_ => SyncPosition())
                 .AddTo(_disposables);
+
+            _messageService.Register(MessageType.UpdatePosition, OnUpdatePosition);
         }
 
         public void Dispose()
         {
+            _messageService.Unregister(MessageType.UpdatePosition, OnUpdatePosition);
             _disposables.Dispose();
             _players.Clear();
         }
@@ -47,7 +51,31 @@ namespace App.Domains.Player.Impl
         public void Unregister(IPlayerModel player) =>
             _players.Remove(player);
 
-        private void ApplyMove(Vector2 input)
+        private void OnUpdatePosition(Response response)
+        {
+            UpdatePositionResponse updatePositionResponse = (UpdatePositionResponse)response;
+
+            if (!updatePositionResponse.IsOk)
+            {
+                return;
+            }
+
+            Vector2 serverPosition = new Vector2(updatePositionResponse.X, updatePositionResponse.Y);
+
+            for (int i = 0; i < _players.Count; i++)
+            {
+                IPlayerModel player = _players[i];
+
+                if (player.Id == updatePositionResponse.Id &&
+                    Vector2.Distance(player.Position, serverPosition) > ServerCorrectionDistance)
+                {
+                    player.SetPosition(serverPosition);
+                    return;
+                }
+            }
+        }
+
+        private void ApplyInput(Vector2 input)
         {
             for (int i = 0; i < _players.Count; i++)
             {
@@ -56,7 +84,7 @@ namespace App.Domains.Player.Impl
             }
         }
 
-        private void SyncPositions()
+        private void SyncPosition()
         {
             for (int i = 0; i < _players.Count; i++)
             {
